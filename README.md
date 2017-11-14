@@ -9,7 +9,7 @@ The project is split into two sub-projects:
 
 ### Requirenments
 * Installed [R](https://cran.r-project.org/) and integrated development environment (IDE) for R like [RStudio](https://www.rstudio.com/).
-* Installed [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) or higher and [Maven3](https://maven.apache.org/download.cgi).
+* Installed [JRE8](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) or higher and [Maven3](https://maven.apache.org/download.cgi).
 
 ## Getting started 
 
