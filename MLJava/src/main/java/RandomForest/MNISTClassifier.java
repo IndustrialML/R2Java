@@ -9,7 +9,7 @@ public class MNISTClassifier {
 
     private final static String importDirPython = "../Maschine Learning/RandomForest/MaaS/export/";
     private final static String importDirR = "../MLR/models/pmml/";
-    private final static String picDir = "../Maschine Learning/Data/Own_dat/"; //where the test pictures are stored
+    private final static String picDir = "";
     private final static String picName = "MNIST-7.png"; //default
     private static String picPath = picDir + picName; //default
 
