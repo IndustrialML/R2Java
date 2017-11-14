@@ -9,7 +9,7 @@ The project is split into two sub-projects:
 
 ### Requirenments
 * Installed [R](https://cran.r-project.org/) and integrated development environment (IDE) for R like [RStudio](https://www.rstudio.com/).
-* //todo Installed Java
+* //todo Installed Java edited
 
 ## Getting started 
 
