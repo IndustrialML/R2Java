@@ -9,11 +9,13 @@ The project is split into two sub-projects:
 
 ### Requirenments
 * Installed [R](https://cran.r-project.org/) and integrated development environment (IDE) for R like [RStudio](https://www.rstudio.com/).
-* Installed [JRE8](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) or higher and [Maven3](https://maven.apache.org/download.cgi).
-
+* Installed [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) or higher and [Maven3](https://maven.apache.org/download.cgi).
+* Install the MLJava project using maven:
+	1. Navigate to the [MLJava](https://github.com/IndustrialML/R2Java/tree/master/MLJava) directory
+	2. Run `mvn install`
 ## Getting started 
 
-//todo Assuming you have cloned this repository and installed [R](https://cran.r-project.org/), an integrated development environment (IDE) for R like [RStudio](https://www.rstudio.com/) and Java already. 
+Assuming you have cloned this repository and meet the requirements shown above:
 
 1. Set your working directory to MLR e.g. `setwd("~/R2Java/MLR")` in R.
 2. Run the *train_randomForestonMNIST_pmml.R file* by using the command:
@@ -23,14 +25,17 @@ source('train_randomForestonMNIST_pmml.R')
 
 This will load the MNIST data set where one image has 28*28 = 784 pixels with values between 0 and 255. The set is organized row-wise. After that the model is trained by using random forests and save it as *.pmml file*.
 
-3. //todo
+3. To load the saved *.pmml file* into java and start using it, you can run the [MNISTClassifier](https://github.com/IndustrialML/R2Java/blob/master/MLJava/src/main/java/RandomForest/MNISTClassifier.java) class with maven:
+```bash
+	mvn exec:java -Dexec.mainClass="RandomForest.MNISTClassifier" -Dexec.args="-r"
+```
 ## 
 
 ## Model as a Service
 
 To get started with using a trained machine learning model from R in Java, you can follow this workflow:
 
-In R:
+### R part
 
 1. Decide which model you want to use and train it. The trained model should be generated with input data using the formula interface e.g. ` randomForest( Y ~ . , d.train) ` instead of `randomForest(x = d.train[, -785], y = d.train[, 785])` .
 
@@ -53,5 +58,57 @@ saveXML(model.pmml, file = "/path_where_it_should_be_saved/model.pmml"))
 
 Now that we saved the R-model as *.pmml file*, we can start using the saved *model.pmml* for predictions in Java.
 
-3. //todo
-4. //todo
+### Java part
+3. You can use the saved *.pmml file* in Java by running the [MNISTClassifier](https://github.com/IndustrialML/R2Java/blob/master/MLJava/src/main/java/RandomForest/MNISTClassifier.java) class. For the full documentation on the `MNISTClassifier` please refer to the [Python2Java](https://github.com/IndustrialML/Python2Java/tree/master/MaschineLearning4J/src/main/java/RandomForest) repository. For now I will try to make you familiar with its usage. We are using the `mvn exec:java` command to run the program. For `Maven` to know which method to run, we need to specify a `mainClass` and pass this argument: `-Dexec.mainClass="RandomForest.MNISTClassifier"`
+4. You can and will need to pass additional program parameters to the class by adding the `-Dexec.args="..."` argument to the `mvn exec:java` command. You can pass in following arguments to the program:
+```bash
+usage: MNISTClassifier
+ -b,--benchmark-test   pass, if you want to run and print the benchmark
+                       test
+ -c,--compare          pass, if you want the results from Python and Java
+                       to be compared for sameness. This action cannot be
+                       performed for the R-technology
+ -h,--help             print this info message again
+ -n,--n-trees <arg>    number of decision trees that were used to create
+                       the PMML. Please check for which number of trees,
+                       you have a valid PMML file on your system. Default
+                       value will be 50
+ -p,--picture <arg>    name of the picture, to predict its displayed
+                       digit. <Arg> can either be a full path or a file in
+                       the Data/Own_dat directory of this project. Default
+                       value will be R2Java/MLJava/MNIST-7.png
+ -r,--use-R            pass, if the pmml you want to load is from a model,
+                       created with R
+```
+**Notes**:
+* *Always*! use the `-r` parameter
+* Never use the `-c` parameter!
+* Make sure to pass in a valid value to the `-n` parameter. Do not pass it in if you want to use the default of 50 trees
+* If you use the `-p` parameter, you need to pass in an absolute path to a .png file
+
+Basic usage example:
+```bash
+	mvn exec:java -Dexec.mainClass="RandomForest.MNISTClassifier" -Dexec.args="-r"
+```
+
+Advanced usage example:
+```bash
+	mvn exec:java -Dexec.mainClass="RandomForest.MNISTClassifier" -Dexec.args="-r -p C:/Users/lema/Pictures/Mnist-test.png -n 500 -b"
+```
+
+When running the advanced example, the output might look confusing at first and might include a lot of superfluous information and warnings, but if it says: `[INFO] Build SUCCESS` in the end, everything worked as intended. By scrolling up you will find the output of the actual program:
+```bash
+	Will use given picture at: C:/Users/lema/Pictures/Mnist-test.png to predict its number.
+	Creating an evaluator from PMML file: ../MLR/models/pmml/model_rf_500trees_60000.pmml.
+	Depending on the size of the RandomForest, this might take a while...
+	Finished creating the evaluator! Took 25105ms to finish.
+
+	The prediction call for given png, using the Random Forest, took 2621ms. (reading the pixel information included)
+	--> The given picture at "C:/Users/lema/IdeaProjects/Maschine Learning/Data/Own_dat/Mnist-7.png" is probably a: 7
+
+	Running benchmark test now...
+			<some more unnecessary information>
+ 	Printed benchmark results to: MaschineLearning4J/src/main/java/RandomForest/benchmark_500.html
+			<possibly some more unnecessary information>
+	
+```

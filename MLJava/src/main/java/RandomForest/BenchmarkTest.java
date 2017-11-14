@@ -131,7 +131,7 @@ public class BenchmarkTest {
 
         try {
             FileUtils.writeStringToFile(htmlFile, htmlString);
-            System.out.println("Printed benchmark results to: MaschineLearning4J/"+filepath);
+            System.out.println("Printed benchmark results to: "+filepath);
         } catch (IOException e) {
             e.printStackTrace();
         }
