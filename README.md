@@ -1,13 +1,18 @@
 # R2Java - R-Model as a Service
-This project was set up by Matthias Leopold and Veronica Pohl at Zühlke Engineering AG Schlieren, to gather the option to use a trained R model for production. We looked at the approach **"Model as a Service"**. This means that the whole machine learning model is supposed to be transferred from R to Java, to execute predictions directly in Java.
+This project was set up by Matthias Leopold and Veronica Pohl at Zühlke Engineering AG Schlieren, to gather the option to use a trained R model for production. We looked at the approach **"Model as a Service"**. This means that the whole machine learning (ML) model is supposed to be transferred from R to Java, to execute predictions directly in Java.
 
 ## Project structure
 The project is split into two sub-projects: 
 1. [MLR (R part)](https://github.com/IndustrialML/R2Java/MLR)
 2. [MLJava (Java part)](https://github.com/IndustrialML/R2Java/tree/master/MLJava)
 
+<img align="right" width="200" height="200" src="images/plot_mnist.jpg">
+The MLR takes the MNIST data set of handwritten digits and train two models by using random forest. The models are:
 
-### Requirenments
+* [**small model**](https://github.com/IndustrialML/R2Java/blob/master/MLR/models/pmml/model_rf_50trees_60000.pmml): This model does use the input data. It was trained with random forest by using 50 trees and 60000 observations.
+* [**large model**](https://github.com/IndustrialML/R2Java/blob/master/MLR/models/pmml/model_rf_500trees_60000.pmml): This model does use the input data. It was trained with random forest by using 500 trees and 60000 observations.
+
+## Requirenments
 * Installed [R](https://cran.r-project.org/) and integrated development environment (IDE) for R like [RStudio](https://www.rstudio.com/).
 * Installed [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) or higher and [Maven3](https://maven.apache.org/download.cgi).
 * Install the MLJava project using maven:
@@ -39,7 +44,7 @@ To get started with using a trained machine learning model from R in Java, you c
 
 1. Decide which model you want to use and train it. The trained model should be generated with input data using the formula interface e.g. ` randomForest( Y ~ . , d.train) ` instead of `randomForest(x = d.train[, -785], y = d.train[, 785])` .
 
-> ### @icon-info-circle *pmml* function in R (version 1.5.2)
+> ### :information_source: *pmml* function in R (version 1.5.2)
 >In general, the *pmml* function expects a R object and so will not work on a list of such objects. One error occur from the fact that in the present release, the pmml function expects the randomForest object to be made using a formula....not using input matrices. Therefore, one would have to access the input data using the formula interface e.g. `V1 + V2 ~ . ` .
 
 2. For making a trained R model available by using the approach "Model as a Service" the next step is to save the model as a *.pmml file* such that one can load it in Java easily: First the R packages ["pmml"](https://cran.r-project.org/web/packages/pmml/pmml.pdf) (version >= 1.5.2) and ["XML"](https://cran.r-project.org/web/packages/XML/XML.pdf) (version >= 3.98-1.9) should be installed. After that one uses the following code which convert the model to pmml and save it as *"model.pmml"*.
